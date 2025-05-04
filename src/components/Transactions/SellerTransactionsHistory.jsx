@@ -56,7 +56,7 @@ function SellerTransaction() {
   const fetchTransactions = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/landRoute/user-transactions/${userId}`
+        `https://lrs-final-back-1.onrender.com/landRoute/user-transactions/${userId}`
       );
       // Filter for seller transactions only
       const sellerTransactions = response.data.filter(
@@ -72,38 +72,24 @@ function SellerTransaction() {
 
   const fetchTransferStatuses = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/landRoute/transfer-statuses`);
-      const statusMap = {};
-      response.data.forEach(transfer => {
-        statusMap[transfer.paymentId] = transfer.status;
-      });
-      setTransferStatuses(statusMap);
+      const response = await axios.get(`https://lrs-final-back-1.onrender.com/landRoute/transfer-statuses`);
+      setTransferStatuses(response.data);
     } catch (error) {
       console.error("Error fetching transfer statuses:", error);
     }
   };
 
-  const requestTransfer = async (transaction) => {
+  const handleTransferRequest = async (transactionId) => {
     try {
       const transferData = {
-        landId: transaction.landId._id,
-        sellerId: transaction.sellerId._id,
-        buyerId: transaction.buyerId._id,
-        transactionHash: transaction.transactionHash,
-        paymentId: transaction._id
+        transactionId,
+        sellerId: userId
       };
-
-      await axios.post('http://localhost:4000/landRoute/request-transfer', transferData);
-      
-      setTransferRequests({
-        ...transferRequests,
-        [transaction._id]: true
-      });
-
-      alert('Transfer request sent successfully!');
+      await axios.post('https://lrs-final-back-1.onrender.com/landRoute/request-transfer', transferData);
+      // Refresh transactions after successful transfer request
+      fetchTransactions();
     } catch (error) {
-      console.error('Error requesting transfer:', error);
-      alert('Failed to send transfer request');
+      console.error("Error requesting transfer:", error);
     }
   };
 
@@ -148,7 +134,7 @@ function SellerTransaction() {
       return (
         <button 
           className="btn btn-primary btn-sm"
-          onClick={() => requestTransfer(transaction)}
+          onClick={() => handleTransferRequest(transaction._id)}
           disabled={isPaymentInEscrow}
           title={isPaymentInEscrow ? "Wait for Land Inspector to release funds" : "Request land transfer"}
         >
@@ -174,7 +160,7 @@ function SellerTransaction() {
             </span>
             <button 
               className="btn btn-primary btn-sm d-block"
-              onClick={() => requestTransfer(transaction)}
+              onClick={() => handleTransferRequest(transaction._id)}
               disabled={isPaymentInEscrow}
               title={isPaymentInEscrow ? "Wait for Land Inspector to release funds" : "Request transfer again"}
             >

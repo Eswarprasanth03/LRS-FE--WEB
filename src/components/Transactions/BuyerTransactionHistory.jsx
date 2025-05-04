@@ -12,7 +12,7 @@ function BuyerTransaction() {
   const fetchTransactions = useCallback(async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/landRoute/user-transactions/${userId}`
+        `https://lrs-final-back-1.onrender.com/landRoute/user-transactions/${userId}`
       );
       // Filter for buyer transactions only
       const buyerTransactions = response.data.filter(

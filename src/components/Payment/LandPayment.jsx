@@ -63,7 +63,7 @@ function LandPayment() {
       console.log("Fetching payments for user:", userId);
 
       const response = await axios.get(
-        `http://localhost:4000/landRoute/pending-payments/${userId}`
+        `https://lrs-final-back-1.onrender.com/landRoute/pending-payments/${userId}`
       );
 
       console.log(
@@ -80,7 +80,7 @@ function LandPayment() {
     try {
       const userId = sessionStorage.getItem("userId");
       const response = await axios.get(
-        `http://localhost:4000/landRoute/user/${userId}`
+        `https://lrs-final-back-1.onrender.com/landRoute/user/${userId}`
       );
       setBuyerDetails(response.data);
     } catch (error) {
@@ -209,8 +209,8 @@ function LandPayment() {
 
       // Use different endpoints based on payment type
       const endpoint = paymentOption === 'direct' 
-        ? "http://localhost:4000/landRoute/record-payment"
-        : "http://localhost:4000/landRoute/record-escrow-payment";
+        ? "https://lrs-final-back-1.onrender.com/landRoute/record-payment"
+        : "https://lrs-final-back-1.onrender.com/landRoute/record-escrow-payment";
 
       const response = await axios.post(endpoint, paymentData);
 

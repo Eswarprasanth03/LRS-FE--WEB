@@ -106,90 +106,51 @@ const Dashboard = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      setIsLoading(true);
-      setError("");
-      setSuccess("");
-
-      if (!loginData.email || !loginData.password) {
-        throw new Error("Please fill in all fields");
-      }
-
-      const endpoint =
-        loginRole === "seller"
-          ? "http://localhost:4000/sellerRouter/login"
-          : "http://localhost:4000/buyerRouter/login";
+      const endpoint = userType === 'seller'
+        ? "https://lrs-final-back-1.onrender.com/sellerRouter/login"
+        : "https://lrs-final-back-1.onrender.com/buyerRouter/login";
 
       const response = await axios.post(endpoint, {
-        email: loginData.email,
-        password: loginData.password,
+        email,
+        password
       });
 
-      if (response.data.userId) {
-        sessionStorage.setItem("userId", response.data.userId);
-        sessionStorage.setItem("userEmail", loginData.email);
-        sessionStorage.setItem("userType", loginRole);
-        sessionStorage.setItem("isVerified", response.data.isVerified || false);
-
-        setSuccess(response.data.message);
-
-        setTimeout(() => {
-          if (loginRole === "seller") {
-            navigate(`/seller-dashboard/${response.data.userId}`);
-          } else if (loginRole === "buyer") {
-            navigate(`/buyer-dashboard/${response.data.userId}`);
-          }
-        }, 1000);
-      } else {
-        throw new Error("Invalid response from server");
+      if (response.data) {
+        sessionStorage.setItem("userId", response.data._id);
+        navigate(`/${userType}-dashboard/${response.data._id}`);
       }
     } catch (error) {
-      setError(error.response?.data?.message || "Login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+      console.error("Login error:", error);
+      setError("Invalid credentials. Please try again.");
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    const formDataToSend = new FormData();
-    Object.keys(formData).forEach((key) => {
-      formDataToSend.append(key, formData[key]);
-    });
-
     try {
-      const registrationEndpoint =
-        formData.userType === "seller"
-          ? "http://localhost:4000/sellerRouter/create-user"
-          : formData.userType === "buyer"
-          ? "http://localhost:4000/buyerRouter/create-user"
-          : formData.userType === "admin"
-          ? "http://localhost:4000/adminRoute/create-user"
-          : null;
-
-      if (!registrationEndpoint) {
-        throw new Error("Invalid user type selected");
+      let endpoint;
+      if (userType === 'seller') {
+        endpoint = "https://lrs-final-back-1.onrender.com/sellerRouter/create-user";
+      } else if (userType === 'buyer') {
+        endpoint = "https://lrs-final-back-1.onrender.com/buyerRouter/create-user";
+      } else {
+        endpoint = "https://lrs-final-back-1.onrender.com/adminRoute/create-user";
       }
 
-      const response = await axios.post(registrationEndpoint, formDataToSend, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await axios.post(endpoint, {
+        name,
+        email,
+        password,
+        phone
       });
-      console.log("Form submitted successfully:", response.data);
-      alert("Registration successful!");
-      // Clear form after successful registration
-      setFormData({
-        name: "",
-        email: "",
-        password: "",
-        phoneNumber: "",
-        location: "",
-        userType: "",
-        governmentId: "",
-        governmentIdImage: null,
-      });
-      setShowRegistration(false);
+
+      if (response.data) {
+        setSuccess("Registration successful! Please login.");
+        setShowLogin(true);
+      }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert(error.message || "Registration failed. Please try again.");
+      console.error("Registration error:", error);
+      setError("Registration failed. Please try again.");
     }
   };
 
@@ -372,7 +333,7 @@ const Dashboard = () => {
         ) : (
           <>
             <h2 className="text-center mb-4">Registration Form</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleRegister}>
               <div className="mb-3">
                 <label htmlFor="name" className="form-label">
                   Name*
