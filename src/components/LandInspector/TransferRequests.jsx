@@ -20,7 +20,7 @@ function TransferRequests() {
 
   const fetchTransferRequests = async () => {
     try {
-      const response = await axios.get('https://git-back-k93u.onrender.com/landRoute/transfer-requests');
+      const response = await axios.get('https://lrs-final-back-1.onrender.com/landRoute/transfer-requests');
       setRequests(response.data);
       setLoading(false);
     } catch (error) {
@@ -64,7 +64,7 @@ function TransferRequests() {
 
   const handleTransfer = async (requestId, action) => {
     try {
-      await axios.post(`https://git-back-k93u.onrender.com/landRoute/process-transfer/${requestId}`, {
+      await axios.post(`https://lrs-final-back-1.onrender.com/landRoute/process-transfer/${requestId}`, {
         action,
         sellerPhoto,
         buyerPhoto,

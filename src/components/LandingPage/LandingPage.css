@@ -1,0 +1,35 @@
+.navbar-brand-flex {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+}
+
+.navbar-logo {
+  height: 14px;
+  width: auto;
+  display: block;
+  margin: 0;
+}
+
+.navbar-title {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #8B4513;
+  letter-spacing: 1px;
+  margin-left: 2px;
+}
+
+@media (max-width: 768px) {
+  .navbar-logo {
+    height: 10px;
+  }
+  .navbar-title {
+    font-size: 1.1rem;
+    margin-left: 1px;
+  }
+  .navbar-brand-flex {
+    gap: 2px;
+  }
+} 

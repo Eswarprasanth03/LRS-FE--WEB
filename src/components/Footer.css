@@ -1,0 +1,59 @@
+.footer {
+  background-color: #d5ece9;
+  color: #030303;
+  padding: 1rem 0;
+  margin-top: auto;
+}
+
+.footer-bottom {
+  text-align: center;
+}
+
+.footer-bottom p {
+  color: #080808;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.team-initials {
+  position: relative;
+  cursor: help;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.team-initials:hover {
+  color: #007bff;
+}
+
+.team-initials[title] {
+  position: relative;
+}
+
+.team-initials[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  background-color: #333;
+  color: white;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 5px;
+}
+
+.team-initials[title]:hover::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+  margin-bottom: -5px;
+} 

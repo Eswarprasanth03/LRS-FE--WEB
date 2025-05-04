@@ -1,3 +1,5 @@
+@import './theme.css';
+
 .navbar-nav .nav-link {
     display: flex;
     align-items: center;
@@ -41,8 +43,6 @@
     border-bottom-color: #343a40;
   }
 
-  
-
   .badge {
     position: relative;
     padding: 0.35em 0.65em;
@@ -68,7 +68,6 @@
     }
   }
 
-/* Add these new styles */
 .text-truncate {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -93,7 +92,6 @@
   opacity: 1;
 }
 
-/* Add hover tooltip for truncated wallet address */
 [data-tooltip] {
   position: relative;
 }
@@ -113,7 +111,6 @@
   z-index: 1000;
 }
 
-/* Make navbar styles specific to land inspector dashboard */
 .land-inspector-nav.navbar {
   backdrop-filter: blur(10px);
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
@@ -145,7 +142,6 @@
   text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Add these styles for the new nav item */
 .land-inspector-nav .nav-link.active {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 0.25rem;
@@ -155,4 +151,188 @@
   transform: translateY(-2px);
   background-color: rgba(255, 255, 255, 0.15);
   transition: all 0.3s ease;
+}
+
+.inspector-dashboard {
+  min-height: 100vh;
+  background-color: var(--bg-light);
+}
+
+.dashboard-nav {
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+  padding: var(--spacing-md) 0;
+  box-shadow: var(--shadow-md);
+}
+
+.nav-brand {
+  color: var(--primary) !important;
+  font-weight: 600;
+  font-size: 1.25rem;
+  position: relative;
+  display: inline-block;
+}
+
+.nav-brand::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--primary);
+  transform: scaleX(0);
+  transition: transform var(--transition-normal);
+}
+
+.nav-brand:hover::after {
+  transform: scaleX(1);
+}
+
+.inspector-nav .nav-link {
+  color: var(--text-light) !important;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.inspector-nav .nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--primary);
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all var(--transition-normal);
+}
+
+.inspector-nav .nav-link:hover::before {
+  opacity: 0.1;
+  transform: translateY(0);
+}
+
+.inspector-nav .nav-link.active {
+  background-color: var(--primary);
+  color: var(--secondary-dark) !important;
+}
+
+.verification-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.verification-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--primary);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.verification-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.verification-card:hover::before {
+  opacity: 1;
+}
+
+.status-badge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-badge.pending {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: var(--primary);
+}
+
+.status-badge.approved {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: var(--success);
+}
+
+.status-badge.rejected {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: var(--error);
+}
+
+.action-button {
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all var(--transition-normal);
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) 0;
+}
+
+.stat-box {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  text-align: center;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-box:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .stats-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .verification-card {
+    margin: var(--spacing-sm);
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+  }
 }

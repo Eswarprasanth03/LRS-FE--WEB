@@ -21,7 +21,7 @@ const VerifyUser = () => {
       setLoading(true);
       setError(null);
       const response = await fetch(
-        `https://git-back-k93u.onrender.com/inspectorRoute/all-users/${activeTab}`
+        `https://lrs-final-back-1.onrender.com/inspectorRoute/all-users/${activeTab}`
       );
 
       if (!response.ok) {
@@ -61,7 +61,7 @@ const VerifyUser = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('https://git-back-k93u.onrender.com/inspectorRoute/verify-user', {
+      const response = await fetch('https://lrs-final-back-1.onrender.com/inspectorRoute/verify-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

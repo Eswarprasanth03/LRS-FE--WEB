@@ -1,152 +1,113 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+import { FaUser, FaEnvelope, FaPhone, FaIdCard } from "react-icons/fa";
+import "./Profile.css";
 
-const BuyerProfile = () => {
+const API_BASE_URL = 'https://lrs-final-back-1.onrender.com';
+
+function BuyerProfile() {
   const { userId } = useParams();
-  const [userData, setUserData] = useState(null);
+  const [buyerData, setBuyerData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showImage, setShowImage] = useState(false); // State to toggle image visibility
-  const [walletAddress, setWalletAddress] = useState(null);
-  const [verified, setVerified] = useState(false);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        console.log("Fetching data for userId:", userId); // Debug userId
-        const response = await axios.get(
-          `https://git-back-k93u.onrender.com/buyerRouter/get-user/${userId}`
-        );
-        console.log("API Response:", response.data); // Debug response
-        if (response.data) {
-          setUserData(response.data);
-          setVerified(response.data.verified || false);
-          setWalletAddress(response.data.walletAddress || null);
-        } else {
-          setError("No user data found.");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setError("Error fetching user data. Please try again.");
-      }
-    };
-
-    if (userId) {
-      fetchUserData();
-    }
+    fetchBuyerData();
   }, [userId]);
 
-  
+  const fetchBuyerData = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/buyerRouter/get-user/${userId}`
+      );
+      setBuyerData(response.data);
+      setLoading(false);
+    } catch (error) {
+      setError("Failed to fetch buyer data");
+      setLoading(false);
+    }
+  };
 
-  if (error) {
-    return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading profile...</p>
+      </div>
+    );
   }
 
-  if (!userData) {
-    return <p>Loading...</p>;
+  if (error) {
+    return (
+      <div className="error-container">
+        <div className="error-message">{error}</div>
+      </div>
+    );
   }
 
   return (
-    <div className="container mt-5">
-      <div className="card shadow-lg">
-        <div className="card-header bg-primary text-white">
-          <h3 className="card-title">Buyer Profile</h3>
+    <div className="profile-container">
+      <div className="profile-header">
+        <div className="profile-avatar">
+          <FaUser size={40} />
         </div>
-        <div className="card-body">
-          <div className="row">
-            {/* Left Column */}
-            <div className="col-md-6">
-              <div className="mb-4">
-                <label className="form-label">
-                  <strong>Name:</strong>
-                </label>
-                <p className="form-control-static">{userData.name}</p>
-              </div>
-              <div className="mb-4">
-                <label className="form-label">
-                  <strong>Email:</strong>
-                </label>
-                <p className="form-control-static">{userData.email}</p>
-              </div>
-              <div className="mb-4">
-                <label className="form-label">
-                  <strong>Address:</strong>
-                </label>
-                <p className="form-control-static">
-                  {userData.location || "Address not available"}
-                </p>
+        <h2>{buyerData?.name}</h2>
+        <p className="profile-subtitle">Buyer Account</p>
+      </div>
+
+      <div className="profile-content">
+        <div className="profile-section">
+          <div className="section-header">
+            <h3>Personal Information</h3>
+          </div>
+          <div className="info-grid">
+            <div className="info-item">
+              <FaUser className="info-icon" />
+              <div className="info-content">
+                <label>Full Name</label>
+                <p>{buyerData?.name}</p>
               </div>
             </div>
-
-            {/* Right Column */}
-            <div className="col-md-6">
-              <div className="mb-4">
-                <label className="form-label">
-                  <strong>Phone Number:</strong>
-                </label>
-                <p className="form-control-static">
-                  {userData.phoneNumber || "Not provided"}
-                </p>
+            <div className="info-item">
+              <FaEnvelope className="info-icon" />
+              <div className="info-content">
+                <label>Email Address</label>
+                <p>{buyerData?.email}</p>
               </div>
-              <div className="mb-4">
-                <label className="form-label">
-                  <strong>Government ID:</strong>
-                </label>
-                <p className="form-control-static">
-                  {userData.governmentId || "Not provided"}
-                </p>
-              </div>
-              <div className="mb-4">
-                <label className="form-label">
-                  <strong>Government ID Image:</strong>
-                </label>
-                {userData.governmentIdImage &&
-                userData.governmentIdImage.data ? (
-                  <div
-                    className="image-container"
-                    style={{
-                      border: "2px solid #ddd",
-                      borderRadius: "8px",
-                      padding: "10px",
-                      cursor: "pointer",
-                      textAlign: "center",
-                      backgroundColor: "#f9f9f9",
-                      transition: "all 0.3s ease",
-                      overflow: "hidden",
-                    }}
-                    onClick={() => setShowImage(!showImage)}
-                  >
-                    {showImage ? (
-                      <img
-                        src={`data:${userData.governmentIdImage.contentType};base64,${userData.governmentIdImage.data}`}
-                        alt="Government ID"
-                        className="img-fluid rounded"
-                        style={{
-                          maxWidth: "100%",
-                          height: "auto",
-                          transition: "all 0.3s ease",
-                        }}
-                      />
-                    ) : (
-                      <p
-                        className="mb-0"
-                        style={{ color: "#007bff", fontWeight: "500" }}
-                      >
-                        Click to view Government ID Image
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <p className="form-control-static">No image available</p>
-                )}
+            </div>
+            <div className="info-item">
+              <FaPhone className="info-icon" />
+              <div className="info-content">
+                <label>Phone Number</label>
+                <p>{buyerData?.phone}</p>
               </div>
             </div>
           </div>
-          <hr />
+        </div>
+
+        <div className="profile-section">
+          <div className="section-header">
+            <h3>Government ID</h3>
+          </div>
+          <div className="id-image-container">
+            {buyerData?.governmentId ? (
+              <img
+                src={buyerData.governmentId}
+                alt="Government ID"
+                className="id-image"
+              />
+            ) : (
+              <div className="id-image-placeholder">
+                <FaIdCard size={40} />
+                <p>No government ID uploaded</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default BuyerProfile;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import {
   FaSignOutAlt,
   FaLandmark,
@@ -10,6 +10,11 @@ import {
   FaLock,
   FaList,
   FaHome,
+  FaRupeeSign,
+  FaChartLine,
+  FaPercentage,
+  FaUsers,
+  FaExchangeAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -18,27 +23,75 @@ import "./SellerDashboard.css";
 function SellerDashboard() {
   const navigate = useNavigate();
   const { userId } = useParams();
+  const location = useLocation();
   const [verificationStatus, setVerificationStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [sellerData, setSellerData] = useState(null);
-
-  useEffect(() => {
-    fetchSellerData();
-  }, [userId]);
+  const [pendingPayments, setPendingPayments] = useState([]);
+  const [statistics, setStatistics] = useState({
+    totalLands: 0,
+    totalSales: 0,
+    totalValue: 0,
+    successRate: 0,
+    recentTransactions: [],
+    monthlyStats: [],
+  });
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const fetchSellerData = async () => {
     try {
       const response = await axios.get(
-        `https://git-back-k93u.onrender.com/sellerRouter/get-user/${userId}`
+        `https://lrs-final-back-1.onrender.com/sellerRouter/get-user/${userId}`
       );
       setSellerData(response.data);
       setVerificationStatus(response.data.isVerified || false);
-      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching seller data:", error);
-      setIsLoading(false);
     }
   };
+
+  const fetchSellerStatistics = async () => {
+    try {
+      const response = await axios.get(
+        `https://lrs-final-back-1.onrender.com/landRoute/seller-statistics/${userId}`
+      );
+      setStatistics(response.data);
+    } catch (error) {
+      console.error("Error fetching seller statistics:", error);
+    }
+  };
+
+  const fetchPendingPayments = async () => {
+    try {
+      const response = await axios.get(
+        `https://lrs-final-back-1.onrender.com/landRoute/pending-payments/${userId}`
+      );
+      console.log("Pending payments response:", response.data);
+      setPendingPayments(response.data);
+    } catch (error) {
+      console.error("Error fetching pending payments:", error);
+      setPendingPayments([]);
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([
+          fetchSellerData(),
+          fetchPendingPayments(),
+          fetchSellerStatistics()
+        ]);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, [userId, location.key, refreshKey]);
 
   const handleLogout = () => {
     sessionStorage.removeItem("userId");
@@ -65,6 +118,22 @@ function SellerDashboard() {
     </div>
   );
 
+  const refreshDashboard = async () => {
+    setRefreshKey(prevKey => prevKey + 1);
+    setIsLoading(true);
+    try {
+      await Promise.all([
+        fetchSellerData(),
+        fetchPendingPayments(),
+        fetchSellerStatistics()
+      ]);
+    } catch (error) {
+      console.error("Error refreshing dashboard:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
@@ -77,9 +146,9 @@ function SellerDashboard() {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-light bg-warning">
+      <nav className="navbar navbar-expand-lg navbar-light">
         <div className="container">
-          <h3>Welcome {sellerData?.name}</h3>
+          <h3 className="welcome-text">Welcome {sellerData?.name}</h3>
           <button
             className="navbar-toggler"
             type="button"
@@ -153,11 +222,122 @@ function SellerDashboard() {
 
         <h1 className="text-center mb-5">Seller Dashboard</h1>
 
+        {/* Analytics Cards */}
+        <div className="row g-4 mb-5">
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm h-100">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 className="text-muted mb-2">Total Lands</h6>
+                    <h3 className="mb-0">{statistics.totalLands}</h3>
+                  </div>
+                  <div className="bg-primary bg-opacity-10 p-3 rounded">
+                    <FaLandmark className="text-primary fs-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm h-100">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 className="text-muted mb-2">Total Sales</h6>
+                    <h3 className="mb-0">{statistics.totalSales}</h3>
+                  </div>
+                  <div className="bg-success bg-opacity-10 p-3 rounded">
+                    <FaExchangeAlt className="text-success fs-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm h-100">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 className="text-muted mb-2">Total Value</h6>
+                    <h3 className="mb-0">
+                      <FaRupeeSign className="fs-5" />
+                      {new Intl.NumberFormat("en-IN").format(statistics.totalValue)}
+                    </h3>
+                  </div>
+                  <div className="bg-warning bg-opacity-10 p-3 rounded">
+                    <FaChartLine className="text-warning fs-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm h-100">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 className="text-muted mb-2">Success Rate</h6>
+                    <h3 className="mb-0">{statistics.successRate}%</h3>
+                  </div>
+                  <div className="bg-info bg-opacity-10 p-3 rounded">
+                    <FaPercentage className="text-info fs-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Transactions */}
+        <div className="row mb-5">
+          <div className="col-12">
+            <div className="card border-0 shadow-sm">
+              <div className="card-body">
+                <h5 className="card-title mb-4">Recent Transactions</h5>
+                <div className="table-responsive">
+                  <table className="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Land</th>
+                        <th>Buyer</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {statistics.recentTransactions.map((transaction) => (
+                        <tr key={transaction._id}>
+                          <td>{new Date(transaction.date).toLocaleDateString()}</td>
+                          <td>{transaction.landLocation}</td>
+                          <td>{transaction.buyerName}</td>
+                          <td>
+                            <FaRupeeSign className="fs-6" />
+                            {new Intl.NumberFormat("en-IN").format(transaction.amount)}
+                          </td>
+                          <td>
+                            <span className={`badge bg-${transaction.status === 'completed' ? 'success' : 'warning'}`}>
+                              {transaction.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
         <div className="row justify-content-center g-4">
           <div className="col-md-6 col-lg-4">
-            <div
-              className={`card h-100 ${!verificationStatus ? "disabled" : ""}`}
-            >
+            <div className={`card h-100 ${!verificationStatus ? "disabled" : ""}`}>
               <div className="card-body text-center">
                 <FaLandmark className="card-icon mb-3 text-primary" size={24} />
                 <h5 className="card-title">Sell Land</h5>
@@ -195,17 +375,6 @@ function SellerDashboard() {
               </div>
             </div>
           </div>
-          <div className="col-md-6 col-lg-4">
-                  
-                        <div className="card h-100">
-                          <div className="card-body text-center">
-                            <FaHome className="card-icon mb-3 text-primary" size={24} />
-                            <h5 className="card-title">Your Lands</h5>
-                            <p className="card-text">View your owned properties and their details.</p>
-                          </div>
-                        </div>
-                    
-                    </div>
         </div>
       </div>
     </>

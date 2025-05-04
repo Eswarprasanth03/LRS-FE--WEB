@@ -1,27 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { FaCheckCircle, FaEthereum, FaMapMarkerAlt, FaClock, FaExchangeAlt } from "react-icons/fa";
+import { FaCheckCircle, FaEthereum, FaMapMarkerAlt, FaClock, FaExchangeAlt, FaSync } from "react-icons/fa";
+import "../CSS/BuyerTransactionHistory.css";
 
 function BuyerTransaction() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const userId = sessionStorage.getItem("userId");
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [userId]);
-
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     try {
       const response = await axios.get(
         `http://localhost:4000/landRoute/user-transactions/${userId}`
       );
-      setTransactions(response.data);
+      // Filter for buyer transactions only
+      const buyerTransactions = response.data.filter(
+        (transaction) => transaction.buyerId._id === userId
+      );
+      setTransactions(buyerTransactions);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching transactions:", error);
       setLoading(false);
     }
+  }, [userId]);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchTransactions();
+    setRefreshing(false);
   };
 
   const getStatusBadgeClass = (status) => {
@@ -63,60 +75,31 @@ function BuyerTransaction() {
     }
   };
 
-  const getTransactionMessage = (transaction, userId) => {
-    const isBuyer = transaction.buyerId._id === userId;
-
-    if (transaction.paymentType === 'escrow') {
-      switch (transaction.status) {
-        case 'inEscrow':
-          return (
-            <div className="alert alert-warning mb-0 py-2">
-              <FaClock className="me-2" />
-              {isBuyer 
-                ? 'Payment sent to Land Inspector. Waiting for verification and release to seller.'
-                : 'Buyer payment is held by Land Inspector. Waiting for release.'}
-            </div>
-          );
-        case 'releasedToSeller':
-          return (
-            <div className="alert alert-info mb-0 py-2">
-              <FaExchangeAlt className="me-2" />
-              Payment has been released by Land Inspector
-            </div>
-          );
-        case 'completed':
-          return (
-            <p className="text-success mb-0">
-              <FaCheckCircle className="me-2" />
-              {isBuyer
-                ? `Successfully purchased from ${transaction.sellerId.name}`
-                : `Successfully sold to ${transaction.buyerId.name}`}
-            </p>
-          );
-        default:
-          return null;
-      }
-    } else {
-      return (
-        <p className="text-success mb-0">
-          <FaCheckCircle className="me-2" />
-          {isBuyer
-            ? `Successfully purchased from ${transaction.sellerId.name}`
-            : `Successfully sold to ${transaction.buyerId.name}`}
-        </p>
-      );
-    }
-  };
-
   if (loading) {
-    return <div className="text-center mt-5"><div className="spinner-border" /></div>;
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-4">Transaction History</h2>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="mb-0">Purchase History</h2>
+        <button 
+          className={`btn btn-outline-primary ${refreshing ? 'disabled' : ''}`}
+          onClick={handleRefresh}
+          disabled={refreshing}
+        >
+          <FaSync className={`me-2 ${refreshing ? 'spin' : ''}`} />
+          {refreshing ? 'Refreshing...' : 'Refresh'}
+        </button>
+      </div>
       {transactions.length === 0 ? (
-        <div className="alert alert-info">No transactions found.</div>
+        <div className="alert alert-info">No purchase transactions found.</div>
       ) : (
         <div className="row">
           {transactions.map((transaction) => (
@@ -124,13 +107,19 @@ function BuyerTransaction() {
               <div className="card shadow-sm">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h5 className="card-title mb-0">
-                      {transaction.buyerId._id === userId ? "Land Purchased" : "Land Sold"}
-                    </h5>
-                    <span className={`badge ${getStatusBadgeClass(transaction.status)}`}>
-                      {getStatusIcon(transaction.status)}
-                      {getStatusText(transaction.status)}
-                    </span>
+                    <h5 className="card-title mb-0">Land Purchased</h5>
+                    <div>
+                      <span className={`badge ${getStatusBadgeClass(transaction.status)} me-2`}>
+                        {getStatusIcon(transaction.status)}
+                        {getStatusText(transaction.status)}
+                      </span>
+                      {transaction.paymentType === 'escrow' && (
+                        <span className="badge bg-info">
+                          <FaEthereum className="me-1" />
+                          Escrow Payment
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="mb-3">
@@ -179,7 +168,30 @@ function BuyerTransaction() {
                   </div>
 
                   <div className="border-top pt-3">
-                    {getTransactionMessage(transaction, userId)}
+                    {transaction.paymentType === 'escrow' && (
+                      <div className="alert alert-info py-2 mb-2">
+                        {transaction.status === 'inEscrow' ? (
+                          <>
+                            <FaClock className="me-2" />
+                            Payment sent to Land Inspector. Waiting for verification and release to seller.
+                          </>
+                        ) : transaction.status === 'releasedToSeller' ? (
+                          <>
+                            <FaExchangeAlt className="me-2" />
+                            Payment has been released by Land Inspector
+                          </>
+                        ) : (
+                          <>
+                            <FaCheckCircle className="me-2" />
+                            Transaction completed
+                          </>
+                        )}
+                      </div>
+                    )}
+                    <p className={`mb-0 ${transaction.status === 'completed' ? 'text-success' : 'text-muted'}`}>
+                      <FaCheckCircle className="me-2" />
+                      Purchased from {transaction.sellerId.name}
+                    </p>
                   </div>
                 </div>
               </div>

@@ -27,8 +27,8 @@ const BuyerNFTLands = () => {
 
   const fetchOwnedLands = async () => {
     try {
-      const res = await axios.get(`http://localhost:4000/landRoute/owned-lands/${userId}`);
-      setLands(res.data);
+      const response = await axios.get(`https://lrs-final-back-1.onrender.com/buyerRouter/get-nft/${userId}`);
+      setLands(response.data);
     } catch (err) {
       setError('Failed to fetch lands');
     }

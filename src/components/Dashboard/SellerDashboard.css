@@ -21,6 +21,7 @@
   transition: transform 0.2s, box-shadow 0.2s;
   border: none;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-align: left;
 }
 
 .card:hover {
@@ -45,13 +46,78 @@
 
 .alert {
   border-left: 4px solid #ffc107;
-}.icon-container {
+  text-align: left;
+}
+
+.icon-container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  height: 50px; /* Adjust as needed */
+  height: 50px;
 }
 
 .card-icon {
-  font-size: 40px; /* Ensure visibility */
+  font-size: 40px;
+}
+
+.welcome-text {
+  color: white;
+  text-align: left;
+}
+
+.card-body {
+  text-align: left;
+}
+
+.card-title {
+  text-align: left;
+}
+
+.card-text {
+  text-align: left;
+}
+
+.text-center {
+  text-align: left !important;
+}
+
+.mb-5 {
+  text-align: left;
+}
+
+/* Table styles */
+.table-hover tbody tr:hover {
+  background-color: transparent !important;
+  transition: all 0.3s ease;
+}
+
+.table-hover tbody tr {
+  transition: all 0.3s ease;
+}
+
+.table-hover tbody tr:hover td {
+  color: #8B4513;
+  transform: translateX(5px);
+}
+
+/* Navigation tab styles */
+.nav-link {
+  color: #8B4513 !important;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #8B4513 !important;
+  opacity: 0.8;
+}
+
+.nav-link.active {
+  color: #8B4513 !important;
+  background-color: rgba(139, 69, 19, 0.1) !important;
+  border-color: #8B4513 !important;
+}
+
+/* Override Bootstrap's text-center class */
+.text-center {
+  text-align: left !important;
 }

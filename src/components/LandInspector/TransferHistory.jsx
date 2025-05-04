@@ -525,7 +525,7 @@ const TransferHistory = () => {
 
   const fetchCompletedTransfers = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/landRoute/completed-transfers');
+      const response = await axios.get('https://lrs-final-back-1.onrender.com/landRoute/completed-transfers');
       setTransfers(response.data);
     } catch (error) {
       console.error('Error fetching completed transfers:', error);

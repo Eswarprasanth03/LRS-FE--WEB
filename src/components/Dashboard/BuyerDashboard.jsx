@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import {
   FaSignOutAlt,
@@ -8,12 +8,17 @@ import {
   FaExclamationCircle,
   FaCheckCircle,
   FaLock,
-  FaCreditCard, // Add this import
-  FaHome, // Add this new import
+  FaCreditCard,
+  FaHome,
+  FaRupeeSign,
+  FaChartLine,
+  FaPercentage,
+  FaExchangeAlt,
+  FaShoppingCart,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./SellerDashboard";
+import "./SellerDashboard.css";
 
 function BuyerDashboard() {
   const navigate = useNavigate();
@@ -23,48 +28,120 @@ function BuyerDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [buyerData, setBuyerData] = useState(null);
   const [pendingPayments, setPendingPayments] = useState([]);
-  const [refreshKey, setRefreshKey] = useState(0); // Add this state for tracking refresh
-
-  useEffect(() => {
-    fetchBuyerData();
-    fetchPendingPayments();
-  }, [userId, location.key, refreshKey]); // Update useEffect to include refreshKey
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [statistics, setStatistics] = useState({
+    totalLands: 0,
+    totalPurchases: 0,
+    totalValue: 0,
+    successRate: 0,
+    recentTransactions: [],
+    monthlyStats: [],
+    pendingPayments: 0
+  });
 
   const fetchBuyerData = async () => {
     try {
       const response = await axios.get(
-        `https://git-back-k93u.onrender.com/buyerRouter/get-user/${userId}`
+        `https://lrs-final-back-1.onrender.com/buyerRouter/get-user/${userId}`
       );
+      console.log("Buyer data response:", response.data);
       setBuyerData(response.data);
       setVerificationStatus(response.data.isVerified || false);
-      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching buyer data:", error);
+      setBuyerData(null);
+    } finally {
       setIsLoading(false);
     }
   };
 
-  // Update the fetchPendingPayments function
+  const fetchBuyerStatistics = async () => {
+    try {
+      const response = await axios.get(
+        `https://lrs-final-back-1.onrender.com/landRoute/buyer-statistics/${userId}`
+      );
+      console.log("Buyer statistics response:", response.data);
+      if (response.data) {
+        setStatistics({
+          ...response.data,
+          totalLands: response.data.totalLands || 0,
+          totalPurchases: response.data.totalPurchases || 0,
+          totalValue: response.data.totalValue || 0,
+          successRate: response.data.successRate || 0,
+          recentTransactions: response.data.recentTransactions || [],
+          monthlyStats: response.data.monthlyStats || []
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching buyer statistics:", error);
+      setStatistics({
+        totalLands: 0,
+        totalPurchases: 0,
+        totalValue: 0,
+        successRate: 0,
+        recentTransactions: [],
+        monthlyStats: []
+      });
+    }
+  };
+
   const fetchPendingPayments = async () => {
     try {
       const response = await axios.get(
-        `https://git-back-k93u.onrender.com/landRoute/pending-payments/${userId}`
+        `https://lrs-final-back-1.onrender.com/landRoute/pending-payments/${userId}`
       );
-      // Show all pending payments without filtering
-      setPendingPayments(response.data);
-      console.log('Pending payments:', response.data); // Debug log
+      console.log("Pending payments response:", response.data);
+      if (Array.isArray(response.data)) {
+        setPendingPayments(response.data);
+      } else {
+        setPendingPayments([]);
+      }
     } catch (error) {
       console.error("Error fetching pending payments:", error);
+      setPendingPayments([]);
     }
   };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([
+          fetchBuyerData(),
+          fetchPendingPayments(),
+          fetchBuyerStatistics()
+        ]);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (userId) {
+      fetchAllData();
+    }
+  }, [userId, location.key, refreshKey]);
 
   const handleLogout = () => {
     sessionStorage.removeItem("userId");
     navigate("/");
   };
 
-  const refreshDashboard = () => {
+  const refreshDashboard = async () => {
     setRefreshKey(prevKey => prevKey + 1);
+    setIsLoading(true);
+    try {
+      await Promise.all([
+        fetchBuyerData(),
+        fetchPendingPayments(),
+        fetchBuyerStatistics()
+      ]);
+    } catch (error) {
+      console.error("Error refreshing dashboard:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const VerificationBadge = () => (
@@ -99,9 +176,9 @@ function BuyerDashboard() {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-light bg-warning">
+      <nav className="navbar navbar-expand-lg navbar-light">
         <div className="container">
-          <h3>Welcome {buyerData?.name}</h3>
+          <h3 className="welcome-text">Welcome {buyerData?.name}</h3>
           <button
             className="navbar-toggler"
             type="button"
@@ -122,33 +199,18 @@ function BuyerDashboard() {
                 <VerificationBadge />
               </li>
               <li className="nav-item">
-                {verificationStatus ? (
-                  <Link className="nav-link" to="/buy-land">
-                    <FaLandmark className="me-1" /> Buy Land
-                  </Link>
-                ) : (
-                  <span
-                    className="nav-link text-muted"
-                    style={{ cursor: "not-allowed" }}
-                  >
-                    <FaLock className="me-1" /> Buy Land
-                  </span>
-                )}
-              </li>
-              {/* Add this new nav item */}
-              <li className="nav-item">
-                <Link className="nav-link" to={`/owned-lands/${userId}`}>
-                  <FaHome className="me-1" /> Your Lands
+                <Link className="nav-link" to="/buy-land">
+                  <FaLandmark className="me-1" /> Buy Land
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/transaction-history">
+                <Link className="nav-link" to="/buyer-transaction-history">
                   <FaHistory className="me-1" /> Transaction History
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to={`/nft-lands/${userId}`}>
-                  <FaHome className="me-1" /> NFT Lands
+                <Link className="nav-link" to={`/owned-lands/${userId}`}>
+                  <FaHome className="me-1" /> Your Lands
                 </Link>
               </li>
               <li className="nav-item">
@@ -195,38 +257,154 @@ function BuyerDashboard() {
 
         <h1 className="text-center mb-5">Buyer Dashboard</h1>
 
+        {/* Analytics Cards */}
+        <div className="row g-4 mb-5">
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm h-100">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 className="text-muted mb-2">Total Lands</h6>
+                    <h3 className="mb-0">{statistics.totalLands}</h3>
+                  </div>
+                  <div className="bg-primary bg-opacity-10 p-3 rounded">
+                    <FaHome className="text-primary fs-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm h-100">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 className="text-muted mb-2">Total Purchases</h6>
+                    <h3 className="mb-0">{statistics.totalPurchases}</h3>
+                  </div>
+                  <div className="bg-success bg-opacity-10 p-3 rounded">
+                    <FaShoppingCart className="text-success fs-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm h-100">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 className="text-muted mb-2">Total Value</h6>
+                    <h3 className="mb-0">
+                      <FaRupeeSign className="fs-5" />
+                      {new Intl.NumberFormat("en-IN").format(statistics.totalValue)}
+                    </h3>
+                  </div>
+                  <div className="bg-warning bg-opacity-10 p-3 rounded">
+                    <FaChartLine className="text-warning fs-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm h-100">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 className="text-muted mb-2">Success Rate</h6>
+                    <h3 className="mb-0">{statistics.successRate}%</h3>
+                  </div>
+                  <div className="bg-info bg-opacity-10 p-3 rounded">
+                    <FaPercentage className="text-info fs-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Transactions */}
+        <div className="row mb-5">
+          <div className="col-12">
+            <div className="card border-0 shadow-sm">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                  <h5 className="card-title mb-0">Recent Transactions</h5>
+                  <button 
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={refreshDashboard}
+                  >
+                    <FaExchangeAlt className="me-1" />
+                    Refresh
+                  </button>
+                </div>
+                <div className="table-responsive">
+                  <table className="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Land</th>
+                        <th>Seller</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {statistics.recentTransactions.map((transaction) => (
+                        <tr key={transaction._id}>
+                          <td>{new Date(transaction.date).toLocaleDateString()}</td>
+                          <td>{transaction.landLocation}</td>
+                          <td>{transaction.sellerName}</td>
+                          <td>
+                            <FaRupeeSign className="fs-6" />
+                            {new Intl.NumberFormat("en-IN").format(transaction.amount)}
+                          </td>
+                          <td>
+                            <span className={`badge bg-${transaction.status === 'completed' ? 'success' : 'warning'}`}>
+                              {transaction.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
         <div className="row justify-content-center g-4">
-          <div className="col-md-6 col-lg-3">
-            <div
-              className={`card h-100 ${!verificationStatus ? "disabled" : ""}`}
-            >
+          <div className="col-md-6 col-lg-4">
+            <div className="card h-100">
               <div className="card-body text-center">
                 <FaLandmark className="card-icon mb-3 text-primary" size={24} />
                 <h5 className="card-title">Buy Land</h5>
                 <p className="card-text">
-                  Explore and purchase available properties.
+                  Browse and purchase available land properties.
                 </p>
-                {!verificationStatus && (
-                  <div className="text-danger mt-2">
-                    <FaLock className="me-1" />
-                    Requires verification
-                  </div>
-                )}
               </div>
             </div>
           </div>
 
-          <div className="col-md-6 col-lg-3">
+          <div className="col-md-6 col-lg-4">
             <div className="card h-100">
               <div className="card-body text-center">
                 <FaHistory className="card-icon mb-3 text-primary" size={24} />
                 <h5 className="card-title">Transaction History</h5>
-                <p className="card-text">View your past land purchases.</p>
+                <p className="card-text">
+                  View your past land purchase transactions.
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="col-md-6 col-lg-3">
+          <div className="col-md-6 col-lg-4">
             <div className="card h-100">
               <div className="card-body text-center">
                 <FaUser className="card-icon mb-3 text-primary" size={24} />
@@ -234,44 +412,6 @@ function BuyerDashboard() {
                 <p className="card-text">Manage your account information.</p>
               </div>
             </div>
-          </div>
-
-          <div className="col-md-6 col-lg-3">
-            <div className="card h-100">
-              <div className="card-body text-center">
-                <FaCreditCard className="card-icon mb-3 text-primary" size={24} />
-                <h5 className="card-title">Pending Payments</h5>
-                <p className="card-text">
-                  Complete payments for approved land requests.
-                </p>
-                <div className="d-flex justify-content-between align-items-center">
-                  {pendingPayments.length > 0 && (
-                    <span className="badge bg-danger">
-                      {pendingPayments.length} pending
-                    </span>
-                  )}
-                  <button 
-                    className="btn btn-sm btn-outline-primary"
-                    onClick={refreshDashboard}
-                  >
-                    Refresh
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Add this inside the row of cards */}
-          <div className="col-md-6 col-lg-3">
-            <Link to={`/owned-lands/${userId}`} className="text-decoration-none">
-              <div className="card h-100">
-                <div className="card-body text-center">
-                  <FaHome className="card-icon mb-3 text-primary" size={24} />
-                  <h5 className="card-title">Your Lands</h5>
-                  <p className="card-text">View your owned properties and their details.</p>
-                </div>
-              </div>
-            </Link>
           </div>
         </div>
       </div>

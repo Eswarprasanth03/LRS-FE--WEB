@@ -141,7 +141,7 @@ const ListForSaleModal = ({ show, handleClose, land, onListingSuccess }) => {
       }
 
       const response = await axios.post(
-        'http://localhost:4000/landRoute/list-for-sale',
+        'https://lrs-final-back-1.onrender.com/landRoute/list-for-sale',
         formData,
         {
           headers: {
@@ -319,7 +319,7 @@ const OwnedLands = () => {
 
   const fetchOwnedLands = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/landRoute/owned-lands/${userId}`);
+      const response = await axios.get(`https://lrs-final-back-1.onrender.com/landRoute/owned-lands/${userId}`);
       setLands(response.data);
       setIsLoading(false);
     } catch (error) {

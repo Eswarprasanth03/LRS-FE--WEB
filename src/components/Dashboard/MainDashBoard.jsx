@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaUser, FaUserTie, FaUserShield, FaSpinner, FaWallet } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../CSS/metamask.css";
+import "../CSS/Login.css";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -10,6 +11,9 @@ const Dashboard = () => {
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [selectedRole, setSelectedRole] = useState("");
   const [loginRole, setLoginRole] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -67,9 +71,12 @@ const Dashboard = () => {
 
   const handleAdminMetaMaskLogin = async () => {
     try {
+      setIsLoading(true);
+      setError("");
+      setSuccess("");
+
       if (!window.ethereum) {
-        alert("Please install MetaMask to login as admin");
-        return;
+        throw new Error("Please install MetaMask to login as admin");
       }
 
       const accounts = await window.ethereum.request({
@@ -77,30 +84,34 @@ const Dashboard = () => {
       });
 
       const address = accounts[0];
-      setAdminWalletAddress(address);
+      const adminWallet = "0xf51Efb9dc6C62BE5F05A505bB0eA4D3848d029f1";
 
-      const adminWallets = ["0x37622b2e2714ee440a7672e7d83802196530b2bc"];
-
-      if (adminWallets.includes(address.toLowerCase())) {
+      if (address.toLowerCase() === adminWallet.toLowerCase()) {
         sessionStorage.setItem("adminAddress", address);
-        navigate("/admin-dashboard");
+        setSuccess("Successfully connected as admin");
+        setTimeout(() => {
+          navigate("/admin-dashboard");
+        }, 1000);
       } else {
-        alert("This wallet is not authorized as admin");
-        sessionStorage.removeItem("adminAddress"); // Clear any existing admin session
+        throw new Error("This wallet is not authorized as admin");
       }
     } catch (error) {
-      console.error("MetaMask login error:", error);
-      alert("Failed to connect to MetaMask");
-      sessionStorage.removeItem("adminAddress"); // Clear any existing admin session
+      setError(error.message || "Failed to connect to MetaMask");
+      sessionStorage.removeItem("adminAddress");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      if (loginRole === "admin") {
-        handleAdminMetaMaskLogin();
-        return;
+      setIsLoading(true);
+      setError("");
+      setSuccess("");
+
+      if (!loginData.email || !loginData.password) {
+        throw new Error("Please fill in all fields");
       }
 
       const endpoint =
@@ -113,28 +124,28 @@ const Dashboard = () => {
         password: loginData.password,
       });
 
-      alert(response.data.message);
+      if (response.data.userId) {
+        sessionStorage.setItem("userId", response.data.userId);
+        sessionStorage.setItem("userEmail", loginData.email);
+        sessionStorage.setItem("userType", loginRole);
+        sessionStorage.setItem("isVerified", response.data.isVerified || false);
 
-      const userId = response.data.userId;
-      const email = response.data.email; // Add this line
+        setSuccess(response.data.message);
 
-      sessionStorage.setItem("userId", userId);
-      sessionStorage.setItem("userEmail", email); // Add this line
-
-      // Navigate to the Buyer Dashboard with the userId in the URL (fix space issue here)
-      if (loginRole === "seller") {
-        navigate(`/seller-dashboard/${userId}`);
-      } else if (loginRole === "buyer") {
-        navigate(`/buyer-dashboard/${userId}`); // Removed space here
-      } else if (loginRole === "admin") {
-        navigate("/admin-dashboard");
+        setTimeout(() => {
+          if (loginRole === "seller") {
+            navigate(`/seller-dashboard/${response.data.userId}`);
+          } else if (loginRole === "buyer") {
+            navigate(`/buyer-dashboard/${response.data.userId}`);
+          }
+        }, 1000);
+      } else {
+        throw new Error("Invalid response from server");
       }
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        alert(error.response.data.message);
-      } else {
-        alert("Login failed. Please try again.");
-      }
+      setError(error.response?.data?.message || "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -146,20 +157,20 @@ const Dashboard = () => {
     });
 
     try {
-      const endpoint =
+      const registrationEndpoint =
         formData.userType === "seller"
-          ? "https://git-back-k93u.onrender.com/sellerRouter/create-user"
+          ? "http://localhost:4000/sellerRouter/create-user"
           : formData.userType === "buyer"
-          ? "https://git-back-k93u.onrender.com/buyerRouter/create-user"
+          ? "http://localhost:4000/buyerRouter/create-user"
           : formData.userType === "admin"
-          ? "https://git-back-k93u.onrender.com/adminRoute/create-user"
+          ? "http://localhost:4000/adminRoute/create-user"
           : null;
 
-      if (!endpoint) {
+      if (!registrationEndpoint) {
         throw new Error("Invalid user type selected");
       }
 
-      const response = await axios.post(endpoint, formDataToSend, {
+      const response = await axios.post(registrationEndpoint, formDataToSend, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       console.log("Form submitted successfully:", response.data);
@@ -191,18 +202,26 @@ const Dashboard = () => {
           <button
             className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
             onClick={handleAdminMetaMaskLogin}
+            disabled={isLoading}
           >
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
-              alt="MetaMask"
-              style={{ width: "24px", height: "24px" }}
-            />
-            Connect MetaMask
+            {isLoading ? (
+              <FaSpinner className="spinner" />
+            ) : (
+              <>
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
+                  alt="MetaMask"
+                  style={{ width: "24px", height: "24px" }}
+                />
+                Connect MetaMask
+              </>
+            )}
           </button>
           <button
             type="button"
             className="btn btn-secondary mt-3 w-100"
             onClick={() => setShowLoginForm(false)}
+            disabled={isLoading}
           >
             Back
           </button>
@@ -212,44 +231,48 @@ const Dashboard = () => {
 
     return (
       <>
-        <h2 className="text-center mb-4">Login Form</h2>
+        <div className="login-header">
+          <h2>Welcome Back!</h2>
+          <p>Please sign in to continue</p>
+        </div>
+        {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
         <form onSubmit={handleLogin}>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Email*
-            </label>
+          <div className="form-group">
+            <label className="form-label">Email Address</label>
             <input
               type="email"
               className="form-control"
-              id="email"
               name="email"
               value={loginData.email}
               onChange={handleLoginChange}
               required
+              disabled={isLoading}
+              placeholder="Enter your email"
             />
           </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Password*
-            </label>
+          <div className="form-group">
+            <label className="form-label">Password</label>
             <input
               type="password"
               className="form-control"
-              id="password"
               name="password"
               value={loginData.password}
               onChange={handleLoginChange}
               required
+              disabled={isLoading}
+              placeholder="Enter your password"
             />
           </div>
           <div className="d-grid gap-2">
-            <button type="submit" className="btn btn-primary">
-              Login
+            <button type="submit" className="btn btn-primary" disabled={isLoading}>
+              {isLoading ? <FaSpinner className="spinner" /> : "Sign In"}
             </button>
             <button
               type="button"
               className="btn btn-secondary"
               onClick={() => setShowLoginForm(false)}
+              disabled={isLoading}
             >
               Back
             </button>
@@ -260,55 +283,50 @@ const Dashboard = () => {
   };
 
   return (
-    <div
-      style={{
-        backgroundImage: `url("https://cms.ezylegal.in/wp-content/uploads/2022/10/registration-land-details.webp")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: "2rem",
-        padding: "2rem",
-      }}
-    >
-      {/* Login Card */}
-      <div
-        className="card p-4"
-        style={{
-          width: "100%",
-          maxWidth: "400px",
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-          borderRadius: "10px",
-        }}
-      >
+    <div className="login-container">
+      <div className="login-card">
         {!showLoginForm ? (
           <div className="text-center">
-            <h2 className="mb-4">Login</h2>
-            <h4 className="mb-4">Welcome Back!</h4>
-            <div className="mb-3">
-              <label className="form-label">Select Role</label>
-              <select
-                className="form-select mb-3"
-                value={loginRole}
-                onChange={(e) => setLoginRole(e.target.value)}
+            <div className="login-header">
+              <h2>Welcome</h2>
+              <p>Choose your role to continue</p>
+            </div>
+            <div className="role-selector">
+              <div
+                className={`role-option ${loginRole === "seller" ? "active" : ""}`}
+                onClick={() => setLoginRole("seller")}
               >
-                <option value="">Select Role</option>
-                <option value="seller">Seller</option>
-                <option value="buyer">Buyer</option>
-                <option value="admin">Admin</option>
-              </select>
+                <FaUser className="role-icon" />
+                <h4>Seller</h4>
+                <p>List and manage properties</p>
+              </div>
+              <div
+                className={`role-option ${loginRole === "buyer" ? "active" : ""}`}
+                onClick={() => setLoginRole("buyer")}
+              >
+                <FaUserTie className="role-icon" />
+                <h4>Buyer</h4>
+                <p>Browse and purchase properties</p>
+              </div>
+              <div
+                className={`role-option ${loginRole === "admin" ? "active" : ""}`}
+                onClick={() => setLoginRole("admin")}
+              >
+                <FaUserShield className="role-icon" />
+                <h4>Admin</h4>
+                <p>Manage the platform</p>
+              </div>
             </div>
             <button
-              className="btn btn-primary w-100"
+              className="btn btn-primary"
               onClick={() =>
                 loginRole
                   ? handleLoginRoleSelect(loginRole)
-                  : alert("Please select a role")
+                  : setError("Please select a role")
               }
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? <FaSpinner className="spinner" /> : "Continue"}
             </button>
           </div>
         ) : (
