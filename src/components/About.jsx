@@ -1,138 +1,100 @@
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import './CSS/MainDashboard.css';
+import { FaHome, FaInfoCircle, FaCogs, FaEnvelope, FaBars, FaTimes } from 'react-icons/fa';
+import logo from '../assets/logomain.png';
 
 const About = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className="about-page">
-      <div className="container py-5">
-        <div className="card shadow-lg">
-          <div className="card-body p-5">
-            <h1 className="text-center mb-4">About Land Registry System</h1>
-            
-            <div className="row">
-              <div className="col-lg-8 mx-auto">
-                <h3 className="mb-4">Our Mission</h3>
-                <p className="lead">
-                  The Land Registry System revolutionizes property management through blockchain technology, 
-                  ensuring secure, transparent, and efficient land transactions in the digital age.
-                </p>
+    <>
+      <nav className={`navbar navbar-expand-lg fixed-top ${isScrolled ? 'navbar-scrolled' : ''}`}>
+        <div className="container">
+          <Link className="navbar-brand navbar-brand-flex" to="/">
+            <img src={logo} alt="LandSecure Logo" className="navbar-logo" />
+            <span className="navbar-title">Land Registry</span>
+          </Link>
+          <button
+            className="navbar-toggler"
+            type="button"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+          </button>
+          <div className={`collapse navbar-collapse ${isMobileMenuOpen ? 'show' : ''}`}>
+            <ul className="navbar-nav me-auto">
+              <li className="nav-item">
+                <Link className="nav-link" to="/" onClick={() => setIsMobileMenuOpen(false)}>
+                  <FaHome className="me-1" /> Home
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/about" onClick={() => setIsMobileMenuOpen(false)}>
+                  <FaInfoCircle className="me-1" /> About 
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/services" onClick={() => setIsMobileMenuOpen(false)}>
+                  <FaCogs className="me-1" /> Services
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                  <FaEnvelope className="me-1" /> Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
 
-                <h3 className="mb-4 mt-5">System Comparison</h3>
-                <div className="table-responsive mb-5">
-                  <table className="table table-bordered">
-                    <thead className="table-light">
-                      <tr>
-                        <th>Feature / Functionality</th>
-                        <th>Traditional System</th>
-                        <th>Our Blockchain System</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Blockchain Use</td>
-                        <td>Manual record keeping</td>
-                        <td>Crypto payments and NFT ownership options</td>
-                      </tr>
-                      <tr>
-                        <td>Smart Contract Integration</td>
-                        <td>Not available</td>
-                        <td>Smart contract escrow for secure transfers</td>
-                      </tr>
-                      <tr>
-                        <td>Payment System</td>
-                        <td>Traditional banking only</td>
-                        <td>Cryptocurrency payment support</td>
-                      </tr>
-                      <tr>
-                        <td>Digital Asset Integration</td>
-                        <td>No digital assets</td>
-                        <td>Optional: Land as NFT asset</td>
-                      </tr>
-                      <tr>
-                        <td>Identity Verification</td>
-                        <td>Basic paper verification</td>
-                        <td>Photo verification before land release</td>
-                      </tr>
-                      <tr>
-                        <td>Document Security</td>
-                        <td>Physical storage</td>
-                        <td>Document tamper-proofing with blockchain hashing</td>
-                      </tr>
-                      <tr>
-                        <td>Verification Process</td>
-                        <td>Manual offline verification</td>
-                        <td>Online verification and approval system</td>
-                      </tr>
-                      <tr>
-                        <td>Ownership History</td>
-                        <td>Basic record keeping</td>
-                        <td>Visual timeline of land ownership</td>
-                      </tr>
-                      <tr>
-                        <td>User Trust System</td>
-                        <td>Not available</td>
-                        <td>Trust score system for buyers/sellers</td>
-                      </tr>
-                      <tr>
-                        <td>Dispute Resolution</td>
-                        <td>Manual offline process</td>
-                        <td>Integrated dispute resolution module</td>
-                      </tr>
-                      <tr>
-                        <td>Accessibility</td>
-                        <td>Limited to office hours</td>
-                        <td>24/7 access with rural accessibility support</td>
-                      </tr>
-                      <tr>
-                        <td>Documentation</td>
-                        <td>Manual paperwork</td>
-                        <td>Auto-generated PDF after land release</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <h3 className="mb-4 mt-5">Key Features</h3>
-                <div className="features-grid">
-                  <div className="feature-item">
-                    <h4>Blockchain Security</h4>
-                    <p>Immutable record-keeping and transparent transaction history</p>
-                  </div>
-                  <div className="feature-item">
-                    <h4>Smart Verification</h4>
-                    <p>Multi-step verification process for land ownership</p>
-                  </div>
-                  <div className="feature-item">
-                    <h4>Digital Documentation</h4>
-                    <p>Secure storage and management of property documents</p>
-                  </div>
-                  <div className="feature-item">
-                    <h4>Real-time Tracking</h4>
-                    <p>Monitor property transactions and verification status</p>
-                  </div>
-                </div>
-
-                <h3 className="mb-4 mt-5">Why Choose Us</h3>
-                <ul className="list-group list-group-flush mb-4">
-                  <li className="list-group-item">Enhanced security through blockchain technology</li>
-                  <li className="list-group-item">Streamlined property registration process</li>
-                  <li className="list-group-item">Transparent transaction history</li>
-                  <li className="list-group-item">Efficient verification system</li>
-                  <li className="list-group-item">User-friendly interface</li>
-                </ul>
-
-                <div className="text-center mt-5">
-                  <Link to="/" className="btn btn-primary btn-lg">
-                    Back to Home
-                  </Link>
-                </div>
+      <div className="container" style={{ paddingTop: '120px', paddingBottom: '50px' }}>
+        <div className="row justify-content-center">
+          <div className="col-md-10">
+            <div className="card shadow-lg border-0 p-4 rounded-4">
+              <h1 className="text-center mb-4 fw-bold">About Land Registry</h1>
+              <p className="lead">
+                The Land Registry System is designed to bring transparency, efficiency, and trust to the way we handle land ownership and property transactions. By leveraging blockchain technology, the platform guarantees tamper-proof record-keeping, automated smart contracts, and faster verification processes.
+              </p>
+              <h4 className="mt-4 fw-semibold">Our Vision</h4>
+              <p>
+                To build a decentralized, secure, and inclusive infrastructure that transforms how land assets are registered, transferred, and verified across communities.
+              </p>
+              <h4 className="mt-4 fw-semibold">Core Objectives</h4>
+              <ul className="list-group list-group-flush mb-4">
+                <li className="list-group-item">✅ Ensure data integrity with blockchain immutability</li>
+                <li className="list-group-item">✅ Minimize fraud and forgery through smart contracts</li>
+                <li className="list-group-item">✅ Offer a user-friendly experience for buyers, sellers, and authorities</li>
+                <li className="list-group-item">✅ Enable real-time verification and ownership tracking</li>
+              </ul>
+              <h4 className="mt-4 fw-semibold">Why Blockchain?</h4>
+              <p>
+                Traditional systems rely heavily on manual paperwork, which often leads to delays, fraud, and data loss. Our solution uses blockchain’s decentralized ledger to create a tamper-proof record of every transaction, allowing all stakeholders to verify information anytime, from anywhere.
+              </p>
+              <h4 className="mt-4 fw-semibold">Who Is It For?</h4>
+              <p>
+                Our system is tailored for government officials, property buyers and sellers, lawyers, and anyone involved in the land registry process. Whether you’re in a rural village or an urban city, our platform is accessible 24/7.
+              </p>
+              <div className="text-center mt-5">
+                <Link to="/" className="btn btn-primary px-5 py-2 rounded-pill shadow-sm">
+                  Back to Home
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -62,7 +62,7 @@ const LandInspectorDashboard = () => {
   const fetchPendingCounts = async () => {
     try {
       const response = await axios.get(
-        "https://lrs-final-back-1.onrender.com/landRoute/pending-counts"
+        "http://localhost:4000/landRoute/pending-counts"
       );
       setCounts(response.data);
     } catch (error) {
@@ -73,7 +73,7 @@ const LandInspectorDashboard = () => {
   const fetchDashboardStatistics = async () => {
     try {
       const response = await axios.get(
-        "https://lrs-final-back-1.onrender.com/landRoute/dashboard-statistics"
+        "http://localhost:4000/landRoute/dashboard-statistics"
       );
       setStatistics(response.data);
     } catch (error) {
@@ -101,7 +101,7 @@ const LandInspectorDashboard = () => {
 
   return (
     <div className="min-vh-100 bg-light">
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm land-inspector-nav">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm land-inspector-nav slide-down">
         <div className="container-fluid px-4">
           <Link className="navbar-brand fw-bold" to="/">
             Land Inspector Portal
@@ -234,7 +234,7 @@ const LandInspectorDashboard = () => {
         <div className="row g-4">
           {/* Statistics Cards */}
           <div className="col-md-3">
-            <div className="card border-0 shadow-sm">
+            <div className="card border-0 shadow-sm hover-lift fade-in" style={{animationDelay: '0.1s'}}>
               <div className="card-body">
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
@@ -250,7 +250,7 @@ const LandInspectorDashboard = () => {
           </div>
 
           <div className="col-md-3">
-            <div className="card border-0 shadow-sm">
+            <div className="card border-0 shadow-sm hover-lift fade-in" style={{animationDelay: '0.2s'}}>
               <div className="card-body">
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
@@ -266,7 +266,7 @@ const LandInspectorDashboard = () => {
           </div>
 
           <div className="col-md-3">
-            <div className="card border-0 shadow-sm">
+            <div className="card border-0 shadow-sm hover-lift fade-in" style={{animationDelay: '0.3s'}}>
               <div className="card-body">
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
@@ -287,7 +287,7 @@ const LandInspectorDashboard = () => {
           </div>
 
           <div className="col-md-3">
-            <div className="card border-0 shadow-sm">
+            <div className="card border-0 shadow-sm hover-lift fade-in" style={{animationDelay: '0.4s'}}>
               <div className="card-body">
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
@@ -304,7 +304,7 @@ const LandInspectorDashboard = () => {
 
           {/* Pending Verifications Summary */}
           <div className="col-md-6">
-            <div className="card border-0 shadow-sm">
+            <div className="card border-0 shadow-sm hover-lift slide-in-left">
               <div className="card-body">
                 <h5 className="card-title mb-4">Pending Verifications</h5>
                 <div className="row g-3">
@@ -359,7 +359,7 @@ const LandInspectorDashboard = () => {
 
           {/* Recent Transactions */}
           <div className="col-md-6">
-            <div className="card border-0 shadow-sm">
+            <div className="card border-0 shadow-sm hover-lift slide-in-right">
               <div className="card-body">
                 <h5 className="card-title mb-4">Recent Transactions</h5>
                 <div className="table-responsive" style={{ maxHeight: "300px" }}>

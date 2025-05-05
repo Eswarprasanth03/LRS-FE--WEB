@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaPaperPlane } from 'react-icons/fa';
+import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaPaperPlane, FaHome, FaInfoCircle, FaCogs, FaBars, FaTimes } from 'react-icons/fa';
 import './Contact.css';
+import React, { useEffect, useState } from 'react';
+import logo from '../../assets/logomain.png';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,17 @@ const Contact = () => {
     message: ''
   });
 
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -26,7 +38,6 @@ const Contact = () => {
     e.preventDefault();
     setStatus({ type: 'loading', message: 'Sending message...' });
 
-    // Simulate API call with setTimeout
     setTimeout(() => {
       setStatus({
         type: 'success',
@@ -38,6 +49,53 @@ const Contact = () => {
 
   return (
     <div className="contact-page">
+      {/* Navbar */}
+      <nav className={`navbar navbar-expand-lg fixed-top ${isScrolled ? 'navbar-scrolled' : ''}`}>
+        <div className="container">
+          <a className="navbar-brand d-flex align-items-center" href="/">
+            <img 
+              src={logo} 
+              alt="Land Registry Logo" 
+              height="40" 
+              className="d-inline-block align-top me-2"
+            />
+            <span className="navbar-title">Land Registry</span>
+          </a>
+          <button
+            className="navbar-toggler"
+            type="button"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+          </button>
+          <div className={`collapse navbar-collapse ${isMobileMenuOpen ? 'show' : ''}`}>
+            <ul className="navbar-nav me-auto">
+              <li className="nav-item">
+                <a className="nav-link" href="/" onClick={() => setIsMobileMenuOpen(false)}>
+                  <FaHome className="me-1" /> Home
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="/about" onClick={() => setIsMobileMenuOpen(false)}>
+                  <FaInfoCircle className="me-1" /> About 
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="/services" onClick={() => setIsMobileMenuOpen(false)}>
+                  <FaCogs className="me-1" /> Services
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                  <FaEnvelope className="me-1" /> Contact
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      {/* Contact Section */}
       <div className="contact-hero">
         <h1>Contact Us</h1>
         <p>Get in touch with our team for any questions or assistance</p>
@@ -135,4 +193,4 @@ const Contact = () => {
   );
 };
 
-export default Contact; 
+export default Contact;

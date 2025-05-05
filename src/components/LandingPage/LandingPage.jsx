@@ -71,6 +71,10 @@ const LandingPage = () => {
     }
     return true;
   };
+  
+const handleGoToDashboard = () => {
+  navigate('/dashboard');
+};
 
   const handleInitialRoleSelect = (role) => {
     clearMessages();
@@ -523,7 +527,7 @@ const LandingPage = () => {
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/about" onClick={() => setIsMobileMenuOpen(false)}>
-                  <FaInfoCircle className="me-1" /> About Us
+                  <FaInfoCircle className="me-1" /> About 
                 </Link>
               </li>
               <li className="nav-item">
@@ -538,7 +542,7 @@ const LandingPage = () => {
               </li>
             </ul>
             
-            <div className="d-flex gap-2">
+            {/* <div className="d-flex gap-2">
               <button 
                 className="btn btn-outline-light"
                 onClick={() => handleLoginRoleSelect("")}
@@ -557,7 +561,7 @@ const LandingPage = () => {
               >
                 <FaWallet className="me-1" /> Admin Login
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </nav>
@@ -580,7 +584,7 @@ const LandingPage = () => {
               <div className="d-flex gap-3">
                 <button 
                   className="btn btn-primary btn-lg"
-                  onClick={() => handleInitialRoleSelect("")}
+                  onClick={() => handleGoToDashboard()}
                 >
                   Get Started
                 </button>
@@ -591,14 +595,23 @@ const LandingPage = () => {
             </div>
             <div className="col-lg-6 d-none d-lg-block slide-in-right">
               <div className="hero-image">
-                <div className="hero-image-container">
-                  <div className="hero-image-placeholder">
-                    <div className="hero-image-content">
-                      <h3>Secure Land Registry</h3>
-                      <p>Powered by Blockchain Technology</p>
-                    </div>
-                  </div>
-                </div>
+                <img 
+                  src={require('../../assets/LandPage.jpg')}
+                  alt="Beautiful Land Property" 
+                  className="img-fluid rounded shadow-lg blockchain-image" 
+                  style={{
+                    maxWidth: '108.8%',  // Increased from 103.6% by 5%
+                    height: '436px',  // Increased from 415px by 5%
+                    objectFit: 'cover',
+                    borderRadius: '15px',
+                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                    animation: 'floatAnimation 6s ease-in-out infinite',
+                    transform: 'rotate(-2deg)',
+                    backgroundColor: '#fff',
+                    margin: 'auto',
+                    display: 'block'
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -643,4 +656,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage; 
+export default LandingPage;

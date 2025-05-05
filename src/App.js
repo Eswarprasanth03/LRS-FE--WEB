@@ -27,6 +27,7 @@ import BuyerNFTLands from "./components/NFT/BuyerNFT";
 import Contact from "./components/Contact/Contact";
 import Footer from "./components/Footer";
 import About from "./components/About";
+
 import './App.css';
 
 const App = () => {
@@ -36,6 +37,7 @@ const App = () => {
         <div className="content">
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/dashboard" element={<div className="page-enter-active"><Dashboard /></div>} />
             <Route path="/contact" element={<div className="page-enter-active"><Contact /></div>} />
             <Route path="/services" element={<div className="page-enter-active"><Services /></div>} />
             <Route path="/about" element={<div className="page-enter-active"><About /></div>} />
