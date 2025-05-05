@@ -4,7 +4,7 @@ import axios from "axios";
 import { FaUser, FaEnvelope, FaPhone, FaIdCard } from "react-icons/fa";
 import "./Profile.css";
 
-const API_BASE_URL = 'https://lrs-final-back-1.onrender.com';
+const API_BASE_URL = 'http://localhost:4000';
 
 function BuyerProfile() {
   const { userId } = useParams();
@@ -80,7 +80,7 @@ function BuyerProfile() {
               <FaPhone className="info-icon" />
               <div className="info-content">
                 <label>Phone Number</label>
-                <p>{buyerData?.phone}</p>
+                <p>{buyerData?.phoneNumber}</p>
               </div>
             </div>
           </div>
@@ -89,11 +89,12 @@ function BuyerProfile() {
         <div className="profile-section">
           <div className="section-header">
             <h3>Government ID</h3>
+            <p className="text-muted small">Document Number: {buyerData?.governmentId}</p>
           </div>
           <div className="id-image-container">
-            {buyerData?.governmentId ? (
+            {buyerData?.governmentIdImage?.data ? (
               <img
-                src={buyerData.governmentId}
+                src={`data:${buyerData.governmentIdImage.contentType};base64,${buyerData.governmentIdImage.data}`}
                 alt="Government ID"
                 className="id-image"
               />

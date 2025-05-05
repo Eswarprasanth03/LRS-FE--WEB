@@ -4,10 +4,10 @@ import { ethers } from "ethers";
 import { FaMapMarkerAlt, FaCheckCircle, FaSpinner, FaExternalLinkAlt } from "react-icons/fa";
 import TestLandNFT from "../NFT/TestLandNFT.json";
 
-const PINATA_API_KEY = "";
-const PINATA_API_SECRET = "";
-const CONTRACT_ADDRESS = "";
-const MINT_PRICE = "0.00001"; // ETH
+const PINATA_API_KEY = "2489b3c1cb95a96fb12a";
+const PINATA_API_SECRET = "cd1780aacff68d23594dec7a16d2eadb5d742bb653f45ad11a20d1df655cf01a";
+const CONTRACT_ADDRESS = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+const MINT_PRICE = "0.00001"; // ETH
 
 const BuyerNFTLands = () => {
   const userId = sessionStorage.getItem("userId");

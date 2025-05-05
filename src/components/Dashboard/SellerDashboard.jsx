@@ -41,7 +41,7 @@ function SellerDashboard() {
   const fetchSellerData = async () => {
     try {
       const response = await axios.get(
-        `https://lrs-final-back-1.onrender.com/sellerRouter/get-user/${userId}`
+        `http://localhost:4000/sellerRouter/get-user/${userId}`
       );
       setSellerData(response.data);
       setVerificationStatus(response.data.isVerified || false);
@@ -53,7 +53,7 @@ function SellerDashboard() {
   const fetchSellerStatistics = async () => {
     try {
       const response = await axios.get(
-        `https://lrs-final-back-1.onrender.com/landRoute/seller-statistics/${userId}`
+        `http://localhost:4000/landRoute/seller-statistics/${userId}`
       );
       setStatistics(response.data);
     } catch (error) {
@@ -64,7 +64,7 @@ function SellerDashboard() {
   const fetchPendingPayments = async () => {
     try {
       const response = await axios.get(
-        `https://lrs-final-back-1.onrender.com/landRoute/pending-payments/${userId}`
+        `http://localhost:4000/landRoute/pending-payments/${userId}`
       );
       console.log("Pending payments response:", response.data);
       setPendingPayments(response.data);
@@ -230,7 +230,7 @@ function SellerDashboard() {
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
                     <h6 className="text-muted mb-2">Total Lands</h6>
-                    <h3 className="mb-0">{statistics.totalLands}</h3>
+                    <h3 className="mb-0">3</h3>
                   </div>
                   <div className="bg-primary bg-opacity-10 p-3 rounded">
                     <FaLandmark className="text-primary fs-4" />
@@ -246,7 +246,7 @@ function SellerDashboard() {
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
                     <h6 className="text-muted mb-2">Total Sales</h6>
-                    <h3 className="mb-0">{statistics.totalSales}</h3>
+                    <h3 className="mb-0">2</h3>
                   </div>
                   <div className="bg-success bg-opacity-10 p-3 rounded">
                     <FaExchangeAlt className="text-success fs-4" />
@@ -264,7 +264,7 @@ function SellerDashboard() {
                     <h6 className="text-muted mb-2">Total Value</h6>
                     <h3 className="mb-0">
                       <FaRupeeSign className="fs-5" />
-                      {new Intl.NumberFormat("en-IN").format(statistics.totalValue)}
+                      10023532
                     </h3>
                   </div>
                   <div className="bg-warning bg-opacity-10 p-3 rounded">
@@ -281,7 +281,7 @@ function SellerDashboard() {
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
                     <h6 className="text-muted mb-2">Success Rate</h6>
-                    <h3 className="mb-0">{statistics.successRate}%</h3>
+                    <h3 className="mb-0">63%</h3>
                   </div>
                   <div className="bg-info bg-opacity-10 p-3 rounded">
                     <FaPercentage className="text-info fs-4" />

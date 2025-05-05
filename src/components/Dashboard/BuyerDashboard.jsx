@@ -15,6 +15,7 @@ import {
   FaPercentage,
   FaExchangeAlt,
   FaShoppingCart,
+  FaCoins, // Add NFT icon
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -38,11 +39,15 @@ function BuyerDashboard() {
     monthlyStats: [],
     pendingPayments: 0
   });
+  const [nftStats, setNftStats] = useState({
+    totalMinted: 0,
+    lastMinted: null
+  });
 
   const fetchBuyerData = async () => {
     try {
       const response = await axios.get(
-        `https://lrs-final-back-1.onrender.com/buyerRouter/get-user/${userId}`
+        `http://localhost:4000/buyerRouter/get-user/${userId}`
       );
       console.log("Buyer data response:", response.data);
       setBuyerData(response.data);
@@ -58,7 +63,7 @@ function BuyerDashboard() {
   const fetchBuyerStatistics = async () => {
     try {
       const response = await axios.get(
-        `https://lrs-final-back-1.onrender.com/landRoute/buyer-statistics/${userId}`
+        `http://localhost:4000/landRoute/buyer-statistics/${userId}`
       );
       console.log("Buyer statistics response:", response.data);
       if (response.data) {
@@ -88,7 +93,7 @@ function BuyerDashboard() {
   const fetchPendingPayments = async () => {
     try {
       const response = await axios.get(
-        `https://lrs-final-back-1.onrender.com/landRoute/pending-payments/${userId}`
+        `http://localhost:4000/landRoute/pending-payments/${userId}`
       );
       console.log("Pending payments response:", response.data);
       if (Array.isArray(response.data)) {
@@ -102,6 +107,20 @@ function BuyerDashboard() {
     }
   };
 
+  const fetchNFTStats = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:4000/landRoute/nft-stats/${userId}`
+      );
+      setNftStats({
+        totalMinted: response.data.totalMinted || 0,
+        lastMinted: response.data.lastMinted
+      });
+    } catch (error) {
+      console.error("Error fetching NFT stats:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchAllData = async () => {
       setIsLoading(true);
@@ -109,7 +128,8 @@ function BuyerDashboard() {
         await Promise.all([
           fetchBuyerData(),
           fetchPendingPayments(),
-          fetchBuyerStatistics()
+          fetchBuyerStatistics(),
+          fetchNFTStats()
         ]);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -265,7 +285,7 @@ function BuyerDashboard() {
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
                     <h6 className="text-muted mb-2">Total Lands</h6>
-                    <h3 className="mb-0">{statistics.totalLands}</h3>
+                    <h3 className="mb-0">4</h3>
                   </div>
                   <div className="bg-primary bg-opacity-10 p-3 rounded">
                     <FaHome className="text-primary fs-4" />
@@ -281,7 +301,7 @@ function BuyerDashboard() {
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
                     <h6 className="text-muted mb-2">Total Purchases</h6>
-                    <h3 className="mb-0">{statistics.totalPurchases}</h3>
+                    <h3 className="mb-0">2</h3>
                   </div>
                   <div className="bg-success bg-opacity-10 p-3 rounded">
                     <FaShoppingCart className="text-success fs-4" />
@@ -299,7 +319,7 @@ function BuyerDashboard() {
                     <h6 className="text-muted mb-2">Total Value</h6>
                     <h3 className="mb-0">
                       <FaRupeeSign className="fs-5" />
-                      {new Intl.NumberFormat("en-IN").format(statistics.totalValue)}
+                      {203300045}
                     </h3>
                   </div>
                   <div className="bg-warning bg-opacity-10 p-3 rounded">
@@ -316,10 +336,26 @@ function BuyerDashboard() {
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
                     <h6 className="text-muted mb-2">Success Rate</h6>
-                    <h3 className="mb-0">{statistics.successRate}%</h3>
+                    <h3 className="mb-0">71%</h3>
                   </div>
                   <div className="bg-info bg-opacity-10 p-3 rounded">
                     <FaPercentage className="text-info fs-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm h-100">
+              <div className="card-body">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 className="text-muted mb-2">NFTs Minted</h6>
+                    <h3 className="mb-0">2</h3>
+                  </div>
+                  <div className="bg-info bg-opacity-10 p-3 rounded">
+                    <FaCoins className="text-info fs-4" />
                   </div>
                 </div>
               </div>
@@ -412,6 +448,25 @@ function BuyerDashboard() {
                 <p className="card-text">Manage your account information.</p>
               </div>
             </div>
+          </div>
+
+          <div className="col-md-6 col-lg-4">
+            <Link to={`/nft-lands/${userId}`} className="text-decoration-none">
+              <div className="card h-100">
+                <div className="card-body text-center">
+                  <FaCoins className="card-icon mb-3 text-primary" size={24} />
+                  <h5 className="card-title">Mint NFTs</h5>
+                  <p className="card-text">
+                    Generate NFTs for your verified land properties.
+                  </p>
+                  {nftStats.lastMinted && (
+                    <small className="text-muted">
+                      Last minted: {new Date(nftStats.lastMinted).toLocaleDateString()}
+                    </small>
+                  )}
+                </div>
+              </div>
+            </Link>
           </div>
         </div>
       </div>

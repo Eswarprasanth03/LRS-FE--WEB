@@ -12,27 +12,27 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 // Header Component
-const Header = () => {
-  return (
-    <Navbar expand="lg" className="app-header" fixed="top">
-      <Container>
-        <Navbar.Brand href="" className="d-flex align-items-center">
-          <HardDriveIcon className="brand-icon" size={24} />
-          <span className="ms-2">LandRegistry</span>
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">
-            <Nav.Link href="#dashboard" className="nav-link">Dashboard</Nav.Link>
-            <Nav.Link href="#properties" className="nav-link">Properties</Nav.Link>
-            <Nav.Link href="#transfers" className="nav-link active">Transfers</Nav.Link>
-            <Nav.Link href="#account" className="nav-link">Account</Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-  );
-};
+// const Header = () => {
+//   return (
+//     <Navbar expand="lg" className="app-header" fixed="top">
+//       <Container>
+//         <Navbar.Brand href="" className="d-flex align-items-center">
+//           <HardDriveIcon className="brand-icon" size={24} />
+//           <span className="ms-2">LandRegistry</span>
+//         </Navbar.Brand>
+//         <Navbar.Toggle aria-controls="basic-navbar-nav" />
+//         <Navbar.Collapse id="basic-navbar-nav">
+//           <Nav className="ms-auto">
+//             <Nav.Link href="#dashboard" className="nav-link">Dashboard</Nav.Link>
+//             <Nav.Link href="#properties" className="nav-link">Properties</Nav.Link>
+//             <Nav.Link href="#transfers" className="nav-link active">Transfers</Nav.Link>
+//             <Nav.Link href="#account" className="nav-link">Account</Nav.Link>
+//           </Nav>
+//         </Navbar.Collapse>
+//       </Container>
+//     </Navbar>
+//   );
+// };
 
 // Photo Viewer Component
 const PhotoViewer = ({ photoUrl, title, onClose }) => {
@@ -525,7 +525,7 @@ const TransferHistory = () => {
 
   const fetchCompletedTransfers = async () => {
     try {
-      const response = await axios.get('https://lrs-final-back-1.onrender.com/landRoute/completed-transfers');
+      const response = await axios.get('http://localhost:4000/landRoute/completed-transfers');
       setTransfers(response.data);
     } catch (error) {
       console.error('Error fetching completed transfers:', error);
@@ -603,7 +603,7 @@ const TransferHistory = () => {
 
   return (
     <div className="app-container">
-      <Header />
+      
       <main className="main-content">
         <Container className="py-4">
           <div className="page-header">

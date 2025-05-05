@@ -13,6 +13,7 @@ import {
   FaRupeeSign,
   FaChartLine,
   FaPercentage,
+  FaFileDownload,
 } from "react-icons/fa";
 import axios from "axios";
 import "../CSS/landInspectorDashboard.css";
@@ -97,6 +98,10 @@ const LandInspectorDashboard = () => {
     sessionStorage.removeItem("adminAddress");
     sessionStorage.removeItem("loginTime");
     navigate("/");
+  };
+
+  const handleGoHistory = () => {
+    navigate('/history');
   };
 
   return (
@@ -200,6 +205,15 @@ const LandInspectorDashboard = () => {
                   <FaHistory className="me-2" />
                   Transfer History
                 </Link>
+              </li>
+              <li className="nav-item">
+                <button
+                  className="nav-link px-3 d-flex align-items-center btn btn-link"
+                  onClick={handleGoHistory}
+                >
+                  <FaFileDownload className="me-2" />
+                  Download EC
+                </button>
               </li>
             </ul>
 

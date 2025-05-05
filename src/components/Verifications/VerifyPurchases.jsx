@@ -14,7 +14,7 @@ function VerifyPurchases() {
 
   const fetchPurchaseRequests = async () => {
     try {
-      const response = await axios.get('https://lrs-final-back-1.onrender.com/inspectorRoute/pending-purchases');
+      const response = await axios.get('http://localhost:4000/inspectorRoute/pending-purchases');
       setRequests(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -29,7 +29,7 @@ function VerifyPurchases() {
       const inspectorId = sessionStorage.getItem('userId');
       const comments = document.getElementById(`comments-${requestId}`).value;
 
-      await axios.post(`https://lrs-final-back-1.onrender.com/inspectorRoute/verify-purchase/${requestId}`, {
+      await axios.post(`http://localhost:4000/inspectorRoute/verify-purchase/${requestId}`, {
         status,
         comments,
         inspectorId

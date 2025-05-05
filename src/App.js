@@ -27,6 +27,7 @@ import BuyerNFTLands from "./components/NFT/BuyerNFT";
 import Contact from "./components/Contact/Contact";
 import Footer from "./components/Footer";
 import About from "./components/About";
+import LandHistory from "./components/Lands/LandHistory";
 
 import './App.css';
 
@@ -57,6 +58,7 @@ const App = () => {
             <Route path="/verify-purchases" element={<ProtectedRoute><VerifyPurchases /></ProtectedRoute>} />
             <Route path="/land-payment/:requestId" element={<LandPayment />} />
             <Route path="/buyer-transaction-history" element={<BuyerTransaction />} />
+            <Route path="/history"element={<LandHistory/>} />
             <Route path="/transfer-ownership/" element={<TransferRequests/>} />
             <Route path="/owned-lands/:userId" element={<OwnedLands/>} />
             <Route path="/nft-lands/:userId" element={<BuyerNFTLands/>} />

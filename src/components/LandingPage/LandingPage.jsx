@@ -171,8 +171,8 @@ const handleGoToDashboard = () => {
 
       const endpoint =
         loginRole === "seller"
-          ? "https://lrs-final-back-1.onrender.com/sellerRouter/login"
-          : "https://lrs-final-back-1.onrender.com/buyerRouter/login";
+          ? "http://localhost:4000/sellerRouter/login"
+          : "http://localhost:4000/buyerRouter/login";
 
       const response = await axios.post(endpoint, {
         email: loginData.email,
@@ -225,9 +225,9 @@ const handleGoToDashboard = () => {
 
       const endpoint =
         formData.userType === "seller"
-          ? "https://lrs-final-back-1.onrender.com/sellerRouter/create-user"
+          ? "http://localhost:4000/sellerRouter/create-user"
           : formData.userType === "buyer"
-          ? "https://lrs-final-back-1.onrender.com/buyerRouter/create-user"
+          ? "http://localhost:4000/buyerRouter/create-user"
           : null;
 
       if (!endpoint) {

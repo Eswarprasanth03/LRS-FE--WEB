@@ -112,13 +112,13 @@ const Contact = () => {
           <div className="info-card">
             <FaPhone className="info-icon" />
             <h3>Call Us</h3>
-            <p>+1 (555) 123-4567</p>
+            <p>9701375924</p>
           </div>
 
           <div className="info-card">
             <FaMapMarkerAlt className="info-icon" />
             <h3>Visit Us</h3>
-            <p>123 Land Registry Street<br />New York, NY 10001</p>
+            <p>123 Land Registry Street<br />Vanastalipuram,Hyderabad</p>
           </div>
         </div>
 

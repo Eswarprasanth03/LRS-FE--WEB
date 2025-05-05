@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { FaCheckCircle, FaTimesCircle, FaMapMarkerAlt, FaCamera } from 'react-icons/fa';
 import '../CSS/TransferRequests.css';
+import { Container, Spinner } from 'react-bootstrap';
 
 
 function TransferRequests() {
@@ -18,9 +19,10 @@ function TransferRequests() {
     fetchTransferRequests();
   }, []);
 
+  
   const fetchTransferRequests = async () => {
     try {
-      const response = await axios.get('https://lrs-final-back-1.onrender.com/landRoute/transfer-requests');
+      const response = await axios.get('http://localhost:4000/landRoute/transfer-requests');
       setRequests(response.data);
       setLoading(false);
     } catch (error) {
@@ -28,6 +30,7 @@ function TransferRequests() {
       setLoading(false);
     }
   };
+  
 
   const startPhotoVerification = async (request) => {
     setSelectedRequest(request);
@@ -64,7 +67,7 @@ function TransferRequests() {
 
   const handleTransfer = async (requestId, action) => {
     try {
-      await axios.post(`https://lrs-final-back-1.onrender.com/landRoute/process-transfer/${requestId}`, {
+      await axios.post(`http://localhost:4000/landRoute/process-transfer/${requestId}`, {
         action,
         sellerPhoto,
         buyerPhoto,
@@ -98,7 +101,16 @@ function TransferRequests() {
   }, [selectedRequest]);
 
   if (loading) {
-    return <div className="text-center mt-5"><div className="spinner-border" /></div>;
+    return (
+      <Container className="py-5 text-center">
+        <div className="custom-spinner-container">
+          <Spinner animation="border" variant="primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+          <p className="mt-3">Loading Transfer Request Page ...</p>
+        </div>
+      </Container>
+    );
   }
 
   return (
