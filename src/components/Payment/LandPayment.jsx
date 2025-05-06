@@ -412,18 +412,8 @@ function LandPayment() {
                   <h4 className="border-bottom pb-2 mb-3">Payment Method</h4>
                   <div className="payment-options">
                     <div className="form-check mb-3">
-                      <input
-                        type="radio"
-                        className="form-check-input"
-                        id="directPayment"
-                        name="paymentOption"
-                        value="direct"
-                        onChange={(e) => setPaymentOption(e.target.value)}
-                        checked={paymentOption === 'direct'}
-                      />
-                      <label className="form-check-label" htmlFor="directPayment">
-                        Direct Transfer to Seller
-                      </label>
+                     
+                      
                     </div>
                     <div className="form-check mb-3">
                       <input
