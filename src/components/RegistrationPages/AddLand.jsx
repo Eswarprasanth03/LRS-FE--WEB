@@ -68,7 +68,7 @@ const AddLand = () => {
       });
 
       const response = await axios.post(
-        "http://localhost:4000/landRoute/create-land",
+        "https://lrs-final-back-1.onrender.com/landRoute/create-land",
         formDataToSend,
         {
           headers: {
@@ -95,7 +95,7 @@ const AddLand = () => {
         }
 
         const response = await axios.get(
-          `http://localhost:4000/sellerRouter/get-user/${userId}`
+          `https://lrs-final-back-1.onrender.com/sellerRouter/get-user/${userId}`
         );
         setUserData(response.data);
         setFormData((prev) => ({

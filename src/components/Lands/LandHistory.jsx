@@ -17,7 +17,7 @@ const LandHistory = () => {
     setError(null);
 
     try {
-      const response = await axios.get(`http://localhost:4000/landRoute/land-history/${landId}`);
+      const response = await axios.get(`https://lrs-final-back-1.onrender.com/landRoute/land-history/${landId}`);
       setHistory(response.data);
     } catch (err) {
       setError('Failed to fetch land history. Please check the Land ID.');

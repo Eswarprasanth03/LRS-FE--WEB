@@ -63,7 +63,7 @@ const LandInspectorDashboard = () => {
   const fetchPendingCounts = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/landRoute/pending-counts"
+        "https://lrs-final-back-1.onrender.com/landRoute/pending-counts"
       );
       setCounts(response.data);
     } catch (error) {
@@ -74,7 +74,7 @@ const LandInspectorDashboard = () => {
   const fetchDashboardStatistics = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/landRoute/dashboard-statistics"
+        "https://lrs-final-back-1.onrender.com/landRoute/dashboard-statistics"
       );
       setStatistics(response.data);
     } catch (error) {

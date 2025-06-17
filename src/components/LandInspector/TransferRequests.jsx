@@ -22,7 +22,7 @@ function TransferRequests() {
   
   const fetchTransferRequests = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/landRoute/transfer-requests');
+      const response = await axios.get('https://lrs-final-back-1.onrender.com/landRoute/transfer-requests');
       setRequests(response.data);
       setLoading(false);
     } catch (error) {
@@ -67,7 +67,7 @@ function TransferRequests() {
 
   const handleTransfer = async (requestId, action) => {
     try {
-      await axios.post(`http://localhost:4000/landRoute/process-transfer/${requestId}`, {
+      await axios.post(`https://lrs-final-back-1.onrender.com/landRoute/process-transfer/${requestId}`, {
         action,
         sellerPhoto,
         buyerPhoto,

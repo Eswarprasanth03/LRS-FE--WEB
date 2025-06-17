@@ -43,7 +43,7 @@ const BuyerNFTLands = () => {
   const fetchUserDetails = async () => {
     try {
       // Using the correct endpoint for fetching buyer details
-      const response = await axios.get(`http://localhost:4000/buyerRouter/get-user/${userId}`);
+      const response = await axios.get(`https://lrs-final-back-1.onrender.com/buyerRouter/get-user/${userId}`);
       setUserDetails(response.data);
     } catch (err) {
       console.error("Error fetching user details:", err);
@@ -53,7 +53,7 @@ const BuyerNFTLands = () => {
 
   const fetchOwnedLands = async () => {
     try {
-      const res = await axios.get(`http://localhost:4000/landRoute/owned-lands/${userId}`);
+      const res = await axios.get(`https://lrs-final-back-1.onrender.com/landRoute/owned-lands/${userId}`);
       const data = Array.isArray(res.data) ? res.data : [];
       
       // Sort lands to put non-minted lands first
@@ -188,7 +188,7 @@ const BuyerNFTLands = () => {
       
       // Update the backend with NFT details
       if (tokenId) {
-        await axios.post(`http://localhost:4000/landRoute/update-nft/${land._id}`, {
+        await axios.post(`https://lrs-final-back-1.onrender.com/landRoute/update-nft/${land._id}`, {
           tokenId,
           transactionHash: tx.hash,
           network: network || "sepolia",

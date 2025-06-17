@@ -47,7 +47,7 @@ function BuyerDashboard() {
   const fetchBuyerData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/buyerRouter/get-user/${userId}`
+        `https://lrs-final-back-1.onrender.com/buyerRouter/get-user/${userId}`
       );
       console.log("Buyer data response:", response.data);
       setBuyerData(response.data);
@@ -63,7 +63,7 @@ function BuyerDashboard() {
   const fetchBuyerStatistics = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/landRoute/buyer-statistics/${userId}`
+        `https://lrs-final-back-1.onrender.com/landRoute/buyer-statistics/${userId}`
       );
       console.log("Buyer statistics response:", response.data);
       if (response.data) {
@@ -93,7 +93,7 @@ function BuyerDashboard() {
   const fetchPendingPayments = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/landRoute/pending-payments/${userId}`
+        `https://lrs-final-back-1.onrender.com/landRoute/pending-payments/${userId}`
       );
       console.log("Pending payments response:", response.data);
       if (Array.isArray(response.data)) {
@@ -110,7 +110,7 @@ function BuyerDashboard() {
   const fetchNFTStats = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/landRoute/nft-stats/${userId}`
+        `https://lrs-final-back-1.onrender.com/landRoute/nft-stats/${userId}`
       );
       setNftStats({
         totalMinted: response.data.totalMinted || 0,

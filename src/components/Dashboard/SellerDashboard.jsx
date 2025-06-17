@@ -41,7 +41,7 @@ function SellerDashboard() {
   const fetchSellerData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/sellerRouter/get-user/${userId}`
+        `https://lrs-final-back-1.onrender.com/sellerRouter/get-user/${userId}`
       );
       setSellerData(response.data);
       setVerificationStatus(response.data.isVerified || false);
@@ -53,7 +53,7 @@ function SellerDashboard() {
   const fetchSellerStatistics = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/landRoute/seller-statistics/${userId}`
+        `https://lrs-final-back-1.onrender.com/landRoute/seller-statistics/${userId}`
       );
       setStatistics(response.data);
     } catch (error) {
@@ -64,7 +64,7 @@ function SellerDashboard() {
   const fetchPendingPayments = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/landRoute/pending-payments/${userId}`
+        `https://lrs-final-back-1.onrender.com/landRoute/pending-payments/${userId}`
       );
       console.log("Pending payments response:", response.data);
       setPendingPayments(response.data);

@@ -21,7 +21,7 @@ const EscrowPayments = () => {
 
   const fetchEscrowPayments = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/landRoute/escrow-payments');
+      const response = await axios.get('https://lrs-final-back-1.onrender.com/landRoute/escrow-payments');
       setEscrowPayments(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -64,7 +64,7 @@ const EscrowPayments = () => {
       console.log('Transaction receipt:', receipt);
 
       // Update the payment status in backend
-      await axios.post(`http://localhost:4000/landRoute/release-escrow/${payment._id}`, {
+      await axios.post(`https://lrs-final-back-1.onrender.com/landRoute/release-escrow/${payment._id}`, {
         transactionHash: tx.hash,
         inspectorAddress: await signer.getAddress(),
         sellerWalletAddress: sellerAddress, // Include the used wallet address

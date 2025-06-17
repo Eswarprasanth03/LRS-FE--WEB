@@ -4,7 +4,7 @@ import axios from "axios";
 import { FaUser, FaEnvelope, FaPhone, FaIdCard } from "react-icons/fa";
 import "./Profile.css";
 
-const API_BASE_URL = 'http://localhost:4000';
+const API_BASE_URL = 'https://lrs-final-back-1.onrender.com';
 
 function BuyerProfile() {
   const { userId } = useParams();
